@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>API Settings - Video Text Extractor</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .language-switcher {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .language-switcher:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .tabs {
+      display: flex;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      border: none;
+      background: white;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab:hover {
+      background: #f8f9fa;
+    }
+
+    .tab.active {
+      color: #007acc;
+      border-bottom-color: #007acc;
+      background: #f0f8ff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .api-section {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .api-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .api-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #495057;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .api-status {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-configured {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-not-configured {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #495057;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e9ecef;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #007acc;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-help {
+      font-size: 12px;
+      color: #6c757d;
+      margin-top: 4px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: #007acc;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #005a9e;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #545b62;
+    }
+
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #218838;
+    }
+
+    .btn-outline {
+      background: white;
+      color: #007acc;
+      border: 2px solid #007acc;
+    }
+
+    .btn-outline:hover {
+      background: #007acc;
+      color: white;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .tutorial-card {
+      background: #e3f2fd;
+      border: 1px solid #bbdefb;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .tutorial-title {
+      font-weight: 600;
+      color: #1565c0;
+      margin-bottom: 8px;
+    }
+
+    .tutorial-steps {
+      font-size: 13px;
+      color: #424242;
+      line-height: 1.5;
+    }
+
+    .tutorial-steps ol {
+      margin-left: 20px;
+    }
+
+    .tutorial-steps li {
+      margin-bottom: 4px;
+    }
+
+    .quota-info {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+      font-size: 12px;
+      color: #856404;
+    }
+
+    .test-result {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .test-result.success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .test-result.error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    .test-result.show {
+      display: block;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e9ecef;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 12px 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #007acc, #005a9e);
+      transition: width 0.3s ease;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #007acc;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #6c757d;
+      margin-top: 4px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #6c757d;
+      font-size: 13px;
+      border-top: 1px solid #dee2e6;
+      margin-top: 40px;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #007acc;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: none;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      max-width: 300px;
+    }
+
+    .notification.show {
+      display: flex;
+    }
+
+    .notification.success {
+      border-left: 4px solid #28a745;
+    }
+
+    .notification.error {
+      border-left: 4px solid #dc3545;
+    }
+
+    .notification.info {
+      border-left: 4px solid #17a2b8;
+    }
+
+    .custom-api-section {
+      background: #f8f9fa;
+      border: 2px dashed #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .custom-api-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .api-template {
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .template-name {
+      font-weight: 600;
+      color: #007acc;
+      margin-bottom: 8px;
+    }
+
+    .template-description {
+      font-size: 12px;
+      color: #6c757d;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .tabs {
+        flex-direction: column;
+      }
+      
+      .tab {
+        border-bottom: 1px solid #dee2e6;
+        border-right: none;
+      }
+      
+      .tab.active {
+        border-bottom-color: #007acc;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <h1>⚙️ API Settings</h1>
+      <p>Configure OCR services for optimal text recognition performance</p>
+    </div>
+    <button class="language-switcher" onclick="switchLanguage('zh')">中文</button>
+  </header>
+
+  <div class="container">
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="apis">🔧 Main APIs</button>
+      <button class="tab" data-tab="custom">🚀 Custom API</button>
+      <button class="tab" data-tab="tutorials">📚 Setup Tutorials</button>
+      <button class="tab" data-tab="settings">⚙️ General Settings</button>
+      <button class="tab" data-tab="stats">📊 Usage Statistics</button>
+    </div>
+
+    <!-- Main APIs Configuration -->
+    <div id="apis-tab" class="tab-content active">
+      <!-- Azure Vision -->
+      <div class="api-section">
+        <div class="api-header">
+          <div class="api-title">
+            🔵 Microsoft Azure Vision
+          </div>
+          <div class="api-status" id="azure-status">Not Configured</div>
+        </div>
+
+        <div class="form-group">
+          <label for="azure-enabled">
+            <div class="checkbox-group">
+              <input type="checkbox" id="azure-enabled">
+              <span>Enable Azure Vision API</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="azure-key">API Key</label>
+          <input type="password" id="azure-key" placeholder="Enter Azure Vision API Key">
+          <div class="form-help">Find the key in your Computer Vision resource in Azure Portal</div>
+        </div>
+
+        <div class="form-group">
+          <label for="azure-endpoint">Service Endpoint</label>
+          <input type="text" id="azure-endpoint" placeholder="https://your-region.api.cognitive.microsoft.com/">
+          <div class="form-help">Azure Computer Vision service endpoint URL</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-outline btn-sm" data-action="test-azure">Test Connection</button>
+          <button class="btn btn-primary btn-sm" data-action="tutorial-azure">View Tutorial</button>
+        </div>
+
+        <div class="test-result" id="azure-test-result"></div>
+
+        <div class="quota-info">
+          <strong>Free Tier:</strong> 1000 calls/month, $200 free credits for 12 months
+        </div>
+      </div>
+
+      <!-- Google Vision -->
+      <div class="api-section">
+        <div class="api-header">
+          <div class="api-title">
+            🟢 Google Cloud Vision
+          </div>
+          <div class="api-status" id="google-status">Not Configured</div>
+        </div>
+
+        <div class="form-group">
+          <label for="google-enabled">
+            <div class="checkbox-group">
+              <input type="checkbox" id="google-enabled">
+              <span>Enable Google Vision API</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="google-key">API Key</label>
+          <input type="password" id="google-key" placeholder="Enter Google Vision API Key">
+          <div class="form-help">Create API key in Google Cloud Console</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-outline btn-sm" data-action="test-google">Test Connection</button>
+          <button class="btn btn-primary btn-sm" data-action="tutorial-google">View Tutorial</button>
+        </div>
+
+        <div class="test-result" id="google-test-result"></div>
+
+        <div class="quota-info">
+          <strong>Free Tier:</strong> 1000 free calls/month, $300 free credits for new users
+        </div>
+      </div>
+
+      <!-- Mathpix -->
+      <div class="api-section">
+        <div class="api-header">
+          <div class="api-title">
+            🟣 Mathpix (Math Formulas)
+          </div>
+          <div class="api-status" id="mathpix-status">Not Configured</div>
+        </div>
+
+        <div class="form-group">
+          <label for="mathpix-enabled">
+            <div class="checkbox-group">
+              <input type="checkbox" id="mathpix-enabled">
+              <span>Enable Mathpix API</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="mathpix-app-id">App ID</label>
+          <input type="text" id="mathpix-app-id" placeholder="Enter Mathpix App ID">
+        </div>
+
+        <div class="form-group">
+          <label for="mathpix-app-key">App Key</label>
+          <input type="password" id="mathpix-app-key" placeholder="Enter Mathpix App Key">
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-outline btn-sm" data-action="test-mathpix">Test Connection</button>
+          <button class="btn btn-primary btn-sm" data-action="tutorial-mathpix">View Tutorial</button>
+        </div>
+
+        <div class="test-result" id="mathpix-test-result"></div>
+
+        <div class="quota-info">
+          <strong>Free Tier:</strong> 1000 calls/month, specialized for math formula recognition
+        </div>
+      </div>
+
+      <!-- OCR.space -->
+      <div class="api-section">
+        <div class="api-header">
+          <div class="api-title">
+            🟡 OCR.space (Free)
+          </div>
+          <div class="api-status" id="ocrSpace-status">Enabled</div>
+        </div>
+
+        <div class="form-group">
+          <label for="ocrSpace-enabled">
+            <div class="checkbox-group">
+              <input type="checkbox" id="ocrSpace-enabled" checked>
+              <span>Enable OCR.space API</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="ocrSpace-key">API Key (Optional)</label>
+          <input type="text" id="ocrSpace-key" placeholder="Leave empty to use free API key">
+          <div class="form-help">You can leave empty to use free API key or enter your own key</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-outline btn-sm" data-action="test-ocrspace">Test Connection</button>
+        </div>
+
+        <div class="test-result" id="ocrSpace-test-result"></div>
+
+        <div class="quota-info">
+          <strong>Free Tier:</strong> 25000 calls/month, no registration required
+        </div>
+      </div>
+
+      <!-- Save Button -->
+      <div class="actions" style="justify-content: center; margin-top: 30px;">
+        <button class="btn btn-success" data-action="save-all" style="font-size: 16px; padding: 12px 24px;">
+          💾 Save All Configuration
+        </button>
+      </div>
+    </div>
+
+    <!-- Custom API Configuration -->
+    <div id="custom-tab" class="tab-content">
+      <div class="custom-api-section">
+        <div class="custom-api-title">
+          🚀 Custom API Configuration
+        </div>
+        
+        <div class="form-group">
+          <label>Select API Template</label>
+          <select id="custom-api-template">
+            <option value="">-- Select Preset Template --</option>
+            <option value="zai">ZAI Smart OCR</option>
+            <option value="baidu">Baidu OCR</option>
+            <option value="tencent">Tencent OCR</option>
+            <option value="aliyun">Alibaba Cloud OCR</option>
+            <option value="huawei">Huawei Cloud OCR</option>
+            <option value="aws">Amazon Textract</option>
+            <option value="custom">Fully Custom</option>
+          </select>
+        </div>
+
+        <!-- Custom API Configuration Form -->
+        <div id="custom-api-form" style="display: none;">
+          <div class="form-group">
+            <label for="custom-api-name">API Name</label>
+            <input type="text" id="custom-api-name" placeholder="e.g., My OCR Service">
+          </div>
+
+          <div class="form-group">
+            <label for="custom-api-url">API Endpoint URL</label>
+            <input type="url" id="custom-api-url" placeholder="https://api.example.com/ocr">
+          </div>
+
+          <div class="form-group">
+            <label for="custom-api-method">Request Method</label>
+            <select id="custom-api-method">
+              <option value="POST">POST</option>
+              <option value="PUT">PUT</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="custom-api-key">API Key</label>
+            <input type="password" id="custom-api-key" placeholder="Enter API Key">
+          </div>
+
+          <div class="form-group">
+            <label for="custom-api-key-header">Key Header Name</label>
+            <input type="text" id="custom-api-key-header" placeholder="e.g., Authorization, X-API-Key">
+            <div class="form-help">Usually Authorization or X-API-Key</div>
+          </div>
+
+          <div class="form-group">
+            <label for="custom-api-data-format">Data Format</label>
+            <select id="custom-api-data-format">
+              <option value="form-data">Form Data</option>
+              <option value="json">JSON</option>
+              <option value="raw">Raw</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="custom-api-image-field">Image Field Name</label>
+            <input type="text" id="custom-api-image-field" placeholder="e.g., image, file, data" value="image">
+          </div>
+
+          <div class="form-group">
+            <label for="custom-api-response-path">Result Path</label>
+            <input type="text" id="custom-api-response-path" placeholder="e.g., result.text, data.ocr" value="result.text">
+            <div class="form-help">Use dot-separated path to access text in JSON response</div>
+          </div>
+
+          <div class="form-group">
+            <label for="custom-api-headers">Custom Headers (JSON)</label>
+            <textarea id="custom-api-headers" placeholder='{"Content-Type": "application/json"}'></textarea>
+            <div class="form-help">Optional, add additional request headers</div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" data-action="save-custom-api">Save Custom API</button>
+            <button class="btn btn-outline" data-action="test-custom-api">Test Connection</button>
+            <button class="btn btn-secondary" data-action="reset-custom-api">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Template Descriptions -->
+      <div class="api-section" style="margin-top: 20px;">
+        <div class="api-title">📋 Supported API Provider Templates</div>
+        
+        <div class="api-template">
+          <div class="template-name">🚀 ZAI Smart OCR</div>
+          <div class="template-description">
+            Professional AI document recognition service supporting multi-language, high-accuracy OCR, specially optimized for Chinese and math formula recognition.
+          </div>
+          <button class="btn btn-outline btn-sm" data-action="apply-template-zai">Apply Template</button>
+        </div>
+
+        <div class="api-template">
+          <div class="template-name">🔵 Baidu OCR</div>
+          <div class="template-description">
+            Baidu Cloud's OCR service supporting general text recognition, ID card recognition, bank card recognition and other scenarios.
+          </div>
+          <button class="btn btn-outline btn-sm" data-action="apply-template-baidu">Apply Template</button>
+        </div>
+
+        <div class="api-template">
+          <div class="template-name">🟠 Tencent OCR</div>
+          <div class="template-description">
+            Tencent Cloud text recognition service supporting multiple scenarios including general printed text, handwritten text, table recognition etc.
+          </div>
+          <button class="btn btn-outline btn-sm" data-action="apply-template-tencent">Apply Template</button>
+        </div>
+
+        <div class="api-template">
+          <div class="template-name">🟡 Alibaba Cloud OCR</div>
+          <div class="template-description">
+            Alibaba Cloud's text recognition service supporting ID card, driver's license, passport, business license and other document recognition.
+          </div>
+          <button class="btn btn-outline btn-sm" data-action="apply-template-aliyun">Apply Template</button>
+        </div>
+
+        <div class="api-template">
+          <div class="template-name">🔴 Huawei Cloud OCR</div>
+          <div class="template-description">
+            Huawei Cloud text recognition service supporting general text recognition, handwritten text recognition, ID card recognition and other functions.
+          </div>
+          <button class="btn btn-outline btn-sm" data-action="apply-template-huawei">Apply Template</button>
+        </div>
+
+        <div class="api-template">
+          <div class="template-name">🟠 Amazon Textract</div>
+          <div class="template-description">
+            AWS's document analysis service that can extract text, forms and tabular data from scanned documents.
+          </div>
+          <button class="btn btn-outline btn-sm" data-action="apply-template-aws">Apply Template</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Setup Tutorials -->
+    <div id="tutorials-tab" class="tab-content">
+      <div class="tutorial-card">
+        <div class="tutorial-title">🚀 Quick Start Guide</div>
+        <div class="tutorial-steps">
+          <ol>
+            <li>Choose one or more OCR services to configure</li>
+            <li>Get API keys following the tutorials</li>
+            <li>Enter keys in settings and test connection</li>
+            <li>Save configuration and start using</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="tutorial-card">
+        <div class="tutorial-title">🔵 Azure Vision Tutorial</div>
+        <div class="tutorial-steps">
+          <ol>
+            <li>Visit <a href="https://azure.microsoft.com" target="_blank">Azure Website</a></li>
+            <li>Register Azure account and login</li>
+            <li>Create "Computer Vision" resource in Azure Portal</li>
+            <li>Select "F0" free pricing tier</li>
+            <li>Find "Keys and Endpoint" in resource page</li>
+            <li>Copy Key 1 and endpoint URL to settings page</li>
+          </ol>
+        </div>
+        <button class="btn btn-primary btn-sm" data-action="tutorial-azure">View Detailed Tutorial</button>
+      </div>
+
+      <div class="tutorial-card">
+        <div class="tutorial-title">🟢 Google Vision Tutorial</div>
+        <div class="tutorial-steps">
+          <ol>
+            <li>Visit <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a></li>
+            <li>Create new project or select existing project</li>
+            <li>Enable "Cloud Vision API"</li>
+            <li>Create service account key</li>
+            <li>Download JSON key file and copy API key</li>
+            <li>Enter API key in settings page</li>
+          </ol>
+        </div>
+        <button class="btn btn-primary btn-sm" data-action="tutorial-google">View Detailed Tutorial</button>
+      </div>
+
+      <div class="tutorial-card">
+        <div class="tutorial-title">🟣 Mathpix Tutorial</div>
+        <div class="tutorial-steps">
+          <ol>
+            <li>Visit <a href="https://accounts.mathpix.com/signup" target="_blank">Mathpix Signup</a></li>
+            <li>Fill registration info and create account</li>
+            <li>Login and go to dashboard</li>
+            <li>Find App ID and App Key in "API Keys" page</li>
+            <li>Copy these two values to settings page</li>
+          </ol>
+        </div>
+        <button class="btn btn-primary btn-sm" data-action="tutorial-mathpix">View Detailed Tutorial</button>
+      </div>
+
+      <div class="tutorial-card">
+        <div class="tutorial-title">🚀 ZAI Smart OCR Tutorial</div>
+        <div class="tutorial-steps">
+          <ol>
+            <li>Visit <a href="https://zai.ai" target="_blank">ZAI Website</a></li>
+            <li>Register account and login</li>
+            <li>Create OCR application in console</li>
+            <li>Get API key and endpoint URL</li>
+            <li>Apply ZAI template in custom API configuration</li>
+            <li>Fill in your API key and test connection</li>
+          </ol>
+        </div>
+        <button class="btn btn-primary btn-sm" data-action="template-zai">Apply ZAI Template</button>
+      </div>
+    </div>
+
+    <!-- General Settings -->
+    <div id="settings-tab" class="tab-content">
+      <div class="api-section">
+        <div class="api-title">⚙️ General Settings</div>
+
+        <div class="form-group">
+          <label for="default-api">Default OCR Service</label>
+          <select id="default-api">
+            <option value="auto">Auto Select</option>
+            <option value="azure">Azure Vision</option>
+            <option value="google">Google Vision</option>
+            <option value="mathpix">Mathpix</option>
+            <option value="ocrSpace">OCR.space</option>
+            <option value="custom">Custom API</option>
+          </select>
+          <div class="form-help">OCR service automatically used when video is detected</div>
+        </div>
+
+        <div class="form-group">
+          <label for="auto-format">
+            <div class="checkbox-group">
+              <input type="checkbox" id="auto-format" checked>
+              <span>Apply Smart Formatting Automatically</span>
+            </div>
+          </label>
+          <div class="form-help">Automatically optimize math formulas, chemical equations etc. in recognition results</div>
+        </div>
+
+        <div class="form-group">
+          <label for="save-history">
+            <div class="checkbox-group">
+              <input type="checkbox" id="save-history" checked>
+              <span>Save Extraction History</span>
+            </div>
+          </label>
+          <div class="form-help">Save recent extraction results locally</div>
+        </div>
+
+        <div class="form-group">
+          <label for="shortcut-key">
+            Shortcut Key
+            <input type="text" id="shortcut-key" value="Ctrl+Shift+V" readonly>
+          </label>
+          <div class="form-help">Shortcut for quickly activating the extension</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-success" data-action="save-settings">Save Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Usage Statistics -->
+    <div id="stats-tab" class="tab-content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="today-extractions">0</div>
+          <div class="stat-label">Today's Extractions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="total-extractions">0</div>
+          <div class="stat-label">Total Extractions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="api-calls">0</div>
+          <div class="stat-label">API Calls</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="success-rate">0%</div>
+          <div class="stat-label">Success Rate</div>
+        </div>
+      </div>
+
+      <div class="api-section" style="margin-top: 20px;">
+        <div class="api-title">📊 API Usage Statistics</div>
+        <div id="api-usage-chart" style="height: 200px; background: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #6c757d;">
+          Chart loading...
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-secondary" data-action="clear-stats">Clear Statistics</button>
+        <button class="btn btn-primary" data-action="export-stats">Export Statistics</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div>Processing...</div>
+  </div>
+
+  <!-- Notification -->
+  <div class="notification" id="notification">
+    <span id="notificationText"></span>
+  </div>
+
+  <div class="footer">
+    <p>Video Text Extractor v1.0.0 - Smart Video Text Extraction Tool</p>
+  </div>
+
+  <script src="en.js"></script>
+</body>
+</html>
