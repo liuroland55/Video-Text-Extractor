@@ -1,0 +1,62 @@
+{
+  "manifest_version": 3,
+  "name": "Video Text Extractor",
+  "version": "1.0.0",
+  "description": "智能提取视频暂停时的文本内容，支持数学公式、代码格式保持",
+  
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs",
+    "scripting"
+  ],
+  
+  "host_permissions": [
+    "https://vision.cognitiveservices.azure.com/*",
+    "https://vision.googleapis.com/*",
+    "https://api.mathpix.com/*",
+    "https://ocr.space/*"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Video Text Extractor",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  
+  "options_page": "options/options.html",
+  
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "result/result.html",
+        "tutorial/tutorial.html",
+        "libs/*",
+        "data/*"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
